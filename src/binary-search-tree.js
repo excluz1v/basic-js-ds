@@ -115,7 +115,6 @@ module.exports = class BinarySearchTree {
       if (currentNode.right) currentNode = currentNode.right
       else return currentNode.data
     }
-
   }
 
 }
