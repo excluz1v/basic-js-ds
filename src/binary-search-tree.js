@@ -15,29 +15,21 @@ module.exports = class BinarySearchTree {
     return this.data
   }
 
-  add(value) {
-    let newNode = new Node(value)
-    if (!this.data) {
-      this.data = newNode
-      return this
+  add(value, currentNode = this.data) {
+    let newNode = new Node(value);
+    if (!currentNode) {
+      this.data = newNode;
+      return;
     }
-    else {
-      let currentNode = this.data
-      while (currentNode) {
-        if (value <= currentNode.data) {
-          if (!currentNode.left) {
-            currentNode.left = newNode
-            return this
-          } else currentNode = currentNode.left
-
-        } else if (value > currentNode.data) {
-          if (!currentNode.right) {
-            currentNode.right = newNode
-            return this
-          } else currentNode = currentNode.right
-        }
-      }
-
+    if (value < currentNode.data) {
+      if (currentNode.left == null) {
+        currentNode.left = new Node(value);
+      } else this.add(value, currentNode.left);
+    }
+    if (value > currentNode.data) {
+      if (currentNode.right == null) {
+        currentNode.right = new Node(value);
+      } else this.add(value, currentNode.right);
     }
   }
 
@@ -74,28 +66,32 @@ module.exports = class BinarySearchTree {
 
   }
 
+  remove(value, currentNode = this.data) {
+    if (currentNode == null) return null;
 
-  remove(value) {
-    if (this.has(value)) {
-      let currentNode = this.data
-      let parentNode
-      while (currentNode) {
-        if (value == currentNode.data) {
-          if (parentNode.left == value) {
-            parentNode.left = null
-          } else parentNode.right = null
-
-        }
-        else if (value < currentNode.data) {
-          parentNode = currentNode
-          currentNode = currentNode.left
-        } else if (value > currentNode.data) {
-          parentNode = currentNode
-          currentNode = currentNode.right
-        }
+    if (value < currentNode.data) {
+      currentNode.left = this.remove(value, currentNode.left);
+    } else if (value > currentNode.data) {
+      currentNode.right = this.remove(value, currentNode.right);
+    } else {
+      if (!currentNode.left) return currentNode.right;
+      else if (!currentNode.right) return currentNode.left;
+      else {
+        let minValue = this.getMinValueNode(currentNode.right);
+        currentNode.data = minValue.data;
+        currentNode.right = this.remove(currentNode.data, currentNode.right);
       }
     }
+    return currentNode;
   }
+
+  getMinValueNode(root) {
+    while (root.left) {
+      root = root.left;
+    }
+    return root;
+  }
+
   min() {
     let currentNode = this.data
     if (!currentNode) return null
